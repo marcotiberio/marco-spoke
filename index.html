@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marco Tiberio — Staff Designer for Spoke</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        dark: '#141a27',
+        body: '#353535',
+        muted: '#6b7280',
+        'light-muted': '#94a0b8',
+        blue: '#286ff5',
+        'blue-hover': '#1d5fd4',
+        green: '#6bbe6b',
+        'bg-soft': '#f7f7f9',
+        'bg-dark': '#1c2333',
+        'bg-dark-card': '#252d3f',
+      },
+      fontFamily: {
+        sans: ["'TT Commons Pro'", '-apple-system', 'system-ui', 'sans-serif'],
+      },
+    },
+  },
+}
+</script>
+<style>
+  @font-face {
+    font-family: 'TT Commons Pro';
+    src: url('tt-commons-pro-variable.woff2') format('woff2-variations');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  html { scroll-behavior: smooth; }
+
+  /* Clamp utilities */
+  .text-hero { font-size: clamp(36px, 5vw, 56px); }
+  .text-hero-sub { font-size: clamp(17px, 2vw, 22px); }
+  .text-section { font-size: clamp(28px, 3.5vw, 44px); }
+  .text-stat { font-size: clamp(32px, 4vw, 48px); }
+  .text-quote { font-size: clamp(20px, 2.5vw, 28px); }
+
+  /* Diamond 3D */
+  .diamond-stack { perspective: 800px; }
+  .diamond-stack-inner {
+    transform-style: preserve-3d;
+    transform: rotateX(55deg) rotateZ(45deg);
+    animation: diamondFloat 4s ease-in-out infinite;
+  }
+  .diamond-layer {
+    transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+    opacity: 0;
+    animation: layerAppear 0.6s ease forwards;
+  }
+  .diamond-layer:nth-child(1) { z-index: 4; transform: translateZ(60px); animation-delay: 0.1s; }
+  .diamond-layer:nth-child(2) { z-index: 3; transform: translateZ(20px); animation-delay: 0.25s; }
+  .diamond-layer:nth-child(3) { z-index: 2; transform: translateZ(-20px); animation-delay: 0.4s; }
+  .diamond-layer:nth-child(4) { z-index: 1; transform: translateZ(-60px); animation-delay: 0.55s; }
+  .diamond-layer.active {
+    background: #286ff5 !important;
+    border-color: #286ff5 !important;
+    box-shadow: 0 8px 32px rgba(40,111,245,0.35);
+  }
+
+  /* Label animations */
+  .diamond-labels.left .diamond-label {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: labelSlideRight 0.5s ease forwards;
+  }
+  .diamond-labels.right .diamond-label {
+    opacity: 0;
+    transition: opacity 0.3s;
+    animation: none;
+  }
+  .diamond-labels.right .diamond-label.active {
+    opacity: 1;
+  }
+  .diamond-label:nth-child(1) { animation-delay: 0.8s; }
+  .diamond-label:nth-child(2) { animation-delay: 1.0s; }
+  .diamond-label:nth-child(3) { animation-delay: 1.2s; }
+  .diamond-label:nth-child(4) { animation-delay: 1.4s; }
+
+  @keyframes labelSlideRight { to { opacity: 1; transform: translateX(0); } }
+  @keyframes layerAppear { 0% { opacity: 0; } 100% { opacity: 1; } }
+  @keyframes diamondFloat {
+    0%, 100% { transform: rotateX(55deg) rotateZ(45deg) translateY(0); }
+    50% { transform: rotateX(55deg) rotateZ(45deg) translateY(-8px); }
+  }
+
+  /* Product card hover — dim siblings */
+  .product-card { transition: opacity 0.3s; }
+  .product-cards-grid:has(.explore-btn:hover) .product-card { opacity: 0.25; }
+  .product-cards-grid:has(.explore-btn:hover) .product-card:has(.explore-btn:hover) { opacity: 1; }
+
+  /* Mock UI glass */
+  .pc-mock-ui { background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+
+  /* Wide feature card */
+  .feature-card.wide { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; }
+
+  @media (max-width: 900px) {
+    .product-cards-grid { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .feature-grid { grid-template-columns: 1fr !important; }
+    .feature-card.wide { grid-template-columns: 1fr; }
+    .diamond-layout { flex-direction: column !important; gap: 40px !important; }
+    .diamond-labels { flex-direction: row !important; flex-wrap: wrap; justify-content: center !important; gap: 16px !important; }
+    .diamond-labels.left, .diamond-labels.right { text-align: center !important; }
+    .diamond-stack { width: 220px !important; height: 280px !important; }
+    .diamond-layer { width: 120px !important; height: 120px !important; margin-left: -60px !important; margin-top: -60px !important; }
+  }
+</style>
+</head>
+<body class="font-sans text-body bg-bg-soft antialiased leading-relaxed">
+
+<!-- NAV -->
+<header class="sticky top-0 z-50 bg-bg-soft/92 backdrop-blur-[12px] border-b border-black/[0.06]">
+  <nav class="max-w-full mx-auto px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center gap-8">
+      <a href="https://tiberiomar.com" class="flex items-center gap-2.5 no-underline">
+        <span class="text-xl font-[800] text-black">Meet Marco</span>
+      </a>
+    </div>
+    <div class="hidden md:flex gap-2 items-center">
+      <a href="#design" class="text-sm font-medium text-dark no-underline px-3.5 py-2 rounded-lg hover:bg-dark/5 transition-colors hidden">Design</a>
+      <a href="#build" class="text-sm font-medium text-dark no-underline px-3.5 py-2 rounded-lg hover:bg-dark/5 transition-colors hidden">Build</a>
+      <a href="#lead" class="text-sm font-medium text-dark no-underline px-3.5 py-2 rounded-lg hover:bg-dark/5 transition-colors hidden">Lead</a>
+      <a href="#contact" class="text-sm font-[550] text-black border border-black/12 no-underline px-[18px] py-2 rounded-lg bg-bg-soft hover:bg-dark/5 transition-colors">Get in touch</a>
+    </div>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="py-10 text-center">
+  <div class="max-w-full mx-auto px-6">
+    <h1 class="text-[2.25rem] font-[680] text-dark leading-[1.08] tracking-[-0.03em] max-w-[1200px] mx-auto">One designer for many uses — <em class="not-italic text-[#4a5874]">for your marketing&nbsp;team.</em></h1>
+    <p class="hidden text-hero-sub text-muted max-w-[560px] mx-auto mb-9 font-normal leading-normal">
+      I design and build web experiences that are clear, commercially strong, and good enough that you're not embarrassed to zoom in.
+    </p>
+    <a href="mailto:tiberiomrc@gmail.com" class="hidden items-center gap-2 bg-blue text-white text-base font-[550] px-7 py-3.5 rounded-lg no-underline hover:bg-blue-hover transition-colors">
+      Let's talk
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+    <p class="hidden mt-3.5 text-[13px] text-light-muted font-medium"><span class="text-green">●</span> Available now · Amsterdam, NL (UTC+1)</p>
+  </div>
+</section>
+
+<!-- PRODUCT CARDS -->
+<section class="pb-20">
+  <div class="mx-auto px-6">
+    <div class="product-cards-grid grid grid-cols-3 gap-[1rem] min-h-[calc(100vh-200px)]">
+
+      <!-- Card 1: Campaign Design -->
+      <div class="bg-[#cfdefd] group product-card px-6 py-5 rounded-[.25rem] overflow-hidden flex flex-col no-underline text-inherit cursor-default transition-all duration-200">
+        <div class="flex items-center justify-between pb-5 border-b border-black/5">
+          <span class="flex items-center gap-2 text-[1.4rem] font-semibold text-dark">
+            <span class="w-8 h-8 rounded-full flex items-center justify-center" style="background:#286ff5;">
+              <svg class="w-4 h-4" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </span>
+            Web Design & Systems
+          </span>
+          <a href="https://tiberiomar.com/citizenm-summer-sale-24/" target="_blank" class="font-[550] text-dark border border-dark/[0.12] rounded-lg px-3.5 py-1.5 whitespace-nowrap transition-all explore-btn hover:bg-[#4a5874] hover:text-white hover:border-[#4a5874]">Explore Case Study</a>
+        </div>
+        <div class="text-[1.15rem] leading-normal text-body pt-5 pb-5">
+          <strong class="text-dark font-semibold">For marketing teams</strong> — I owned citizenM's full web presence as their sole in-house designer. Campaign landing pages, microsites, CRM flows, paid ads, social. Each one went from a loose brief to shipped pages.<br><br>More work insights here:
+          <ul class="flex flex-col text-[16px] list-none">
+            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue flex-shrink-0"></span><a href="https://www.figma.com/design/i7dGIP4tK8gO29KFz06ZXD/citizenM-Website-modules?node-id=0-1&t=5F5NL7llqG8UxEG6-1" target="_blank" class="hover:text-blue transition-colors">citizenM Website Modules</a></li>
+            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue flex-shrink-0"></span><a href="https://www.figma.com/design/pJOPBjp8luAjYnmweQLFFr/ProKip--Case-Study-?node-id=916-5781&t=x7O0OAB6oYXNRj1G-1" target="_blank" class="hover:text-blue transition-colors">ProKip Website Redesign</a></li>
+          </ul>
+        </div>
+        <div class="flex-1 flex-col justify-end rounded-[1.5rem] min-h-[320px] relative overflow-hidden flex gap-3 p-3">
+          <img src="spoke-img/Screenshot 2026-03-30 at 11.12.43.png" alt="citizenM campaign page" class=" object-cover rounded-xl">
+          <img src="spoke-img/Screenshot 2026-03-30 at 11.12.52.png" alt="citizenM campaign page" class=" object-cover rounded-xl">
+        </div>
+      </div>
+
+      <!-- Card 2: Design Systems -->
+      <div class="bg-[#dce2ee80] group product-card px-6 py-5 rounded-[.25rem] overflow-hidden flex flex-col no-underline text-inherit cursor-default transition-all duration-200">
+        <div class="flex items-center justify-between pb-5 border-b border-black/5">
+          <span class="flex items-center gap-2 text-[1.4rem] font-semibold text-dark">
+            <span class="w-8 h-8 rounded-full flex items-center justify-center" style="background:#286ff5;">
+              <svg class="w-4 h-4" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            </span>
+            Brand & Web Design
+          </span>
+          <a href="https://tiberiomar.com/activant-capital/" target="_blank" class="font-[550] text-dark border border-dark/[0.12] rounded-lg px-3.5 py-1.5 whitespace-nowrap transition-all explore-btn hover:bg-[#4a5874] hover:text-white hover:border-[#4a5874]">Explore Case Study</a>
+        </div>
+        <div class="text-[1.15rem] leading-normal text-body pt-5 pb-5">
+          <strong class="text-dark font-semibold">For teams that scale</strong> — I extended citizenM's design system in Figma so the whole team could work with consistent components. Reusable libraries for web, email, and social — without me being a bottleneck.<br><br>More work insights here:
+          <ul class="mt-4 flex flex-col gap-2 text-[16px] list-none">
+            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-blue flex-shrink-0"></span><a href="https://www.figma.com/design/aBXaSoA9bpxVfskG2dl94i/INTERNAL-Activant-Website_Fixes---Feature-Additions_August-2023--Copy-?node-id=384-597&t=OWqOtrW2EVFLauqN-1" target="_blank" class="hover:text-blue transition-colors">Activant Capital — Extending Website Modules</a></li>
+          </ul>
+        </div>
+        <div class="flex-1 flex-col justify-end rounded-[1.5rem] min-h-[320px] relative overflow-hidden flex gap-3 p-3">
+          <img src="spoke-img/Screenshot 2026-03-30 at 11.13.23.png" alt="citizenM campaign page" class=" object-cover rounded-xl">
+          <img src="spoke-img/Screenshot 2026-03-30 at 11.13.55.png" alt="citizenM campaign page" class=" object-cover rounded-xl">
+        </div>
+      </div>
+
+      <!-- Card 3: Web Development -->
+      <div class="bg-[#e8effd] group product-card px-6 py-5 rounded-[.25rem] overflow-hidden flex flex-col no-underline text-inherit cursor-default transition-all duration-200">
+        <div class="flex items-center justify-between pb-5 border-b border-black/5">
+          <span class="flex items-center gap-2 text-[1.4rem] font-semibold text-dark">
+            <span class="w-8 h-8 rounded-full flex items-center justify-center" style="background:#286ff5;">
+              <svg class="w-4 h-4" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/></svg>
+            </span>
+            Web Development
+          </span>
+          <a href="https://tiberionline.netlify.app/" target="_blank" class="font-[550] text-dark border border-dark/[0.12] rounded-lg px-3.5 py-1.5 whitespace-nowrap transition-all explore-btn hover:bg-[#4a5874] hover:text-white hover:border-[#4a5874]">Explore Work</a>
+        </div>
+        <div class="text-[1.15rem] leading-normal text-body pt-5 pb-5">
+          <strong class="text-dark font-semibold">For brands that ship</strong> — I also code. I build in Nuxt, Tailwind, and Sanity CMS. When I tweak spacing or rethink a hierarchy, I know what it costs to implement — because I'm the one implementing it.
+          <span class="hidden text-[17px] font-[550] text-dark mt-3 tracking-tight">Activant · 113</span>
+        </div>
+        <div class="flex-1 rounded-[1.5rem] min-h-[320px] relative overflow-hidden">
+          <iframe class="w-full h-full absolute inset-0 rounded-[1.5rem] border-0" src="https://embed.figma.com/design/i7dGIP4tK8gO29KFz06ZXD/citizenM-Website-modules?node-id=0-1&embed-host=share" allowfullscreen></iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STACKED DIAMOND ANIMATION -->
+<section class="py-[100px]">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <div class="text-center mb-16">
+      <div class="text-sm font-semibold text-blue tracking-wide mb-3 uppercase">Why me?</div>
+      <h2 class="text-section font-[680] text-dark leading-[1.12] tracking-[-0.025em]">A complete loop from brief to&nbsp;launch</h2>
+    </div>
+    <div class="diamond-layout flex items-center justify-center gap-20 max-w-[1000px] mx-auto uppercase">
+      <div class="diamond-labels left flex flex-col min-w-[140px] text-right" id="diamond-labels-left">
+        <div class="diamond-label py-4 active text-sm font-semibold tracking-[0.08em] uppercase text-dark cursor-pointer transition-colors hover:text-blue" data-index="0">Strategy</div>
+        <div class="diamond-label py-4 text-sm font-semibold tracking-[0.08em] uppercase text-dark cursor-pointer transition-colors hover:text-blue" data-index="1">Design</div>
+        <div class="diamond-label py-4 text-sm font-semibold tracking-[0.08em] uppercase text-dark cursor-pointer transition-colors hover:text-blue" data-index="2">Build</div>
+        <div class="diamond-label py-4 text-sm font-semibold tracking-[0.08em] uppercase text-dark cursor-pointer transition-colors hover:text-blue" data-index="3">Iterate</div>
+      </div>
+      <div class="diamond-stack relative w-[280px] h-[340px]">
+        <div class="diamond-stack-inner w-full h-full relative" id="diamond-stack">
+          <div class="diamond-layer active absolute w-[160px] h-[160px] left-1/2 top-1/2 -ml-[80px] -mt-[80px] rounded border-2 border-gray-200 bg-transparent"></div>
+          <div class="diamond-layer absolute w-[160px] h-[160px] left-1/2 top-1/2 -ml-[80px] -mt-[80px] rounded border-2 border-gray-200 bg-transparent"></div>
+          <div class="diamond-layer absolute w-[160px] h-[160px] left-1/2 top-1/2 -ml-[80px] -mt-[80px] rounded border-2 border-gray-200 bg-transparent"></div>
+          <div class="diamond-layer absolute w-[160px] h-[160px] left-1/2 top-1/2 -ml-[80px] -mt-[80px] rounded border-2 border-gray-200 bg-transparent"></div>
+        </div>
+      </div>
+      <div class="diamond-labels right relative w-[140px] text-left flex items-center" id="diamond-labels-right">
+        <div class="diamond-label active absolute left-0 text-sm font-medium text-muted cursor-default">Campaign briefs & positioning</div>
+        <div class="diamond-label absolute left-0 text-sm font-medium text-muted cursor-default">Figma, systems & prototypes</div>
+        <div class="diamond-label absolute left-0 text-sm font-medium text-muted cursor-default">Nuxt, Tailwind & CMS</div>
+        <div class="diamond-label absolute left-0 text-sm font-medium text-muted cursor-default">Data-informed refinement</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="py-[60px] border-y border-gray-200">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <div class="stats-grid grid grid-cols-4 gap-8 text-center">
+      <div>
+        <div class="text-stat font-bold text-dark tracking-[-0.03em] leading-[1.1]">€20M+</div>
+        <div class="text-sm text-muted mt-1.5 font-[450]">campaign revenue co-led</div>
+      </div>
+      <div>
+        <div class="text-stat font-bold text-dark tracking-[-0.03em] leading-[1.1]">6+</div>
+        <div class="text-sm text-muted mt-1.5 font-[450]">years designing for web</div>
+      </div>
+      <div>
+        <div class="text-stat font-bold text-dark tracking-[-0.03em] leading-[1.1]">€50K+</div>
+        <div class="text-sm text-muted mt-1.5 font-[450]">saved replacing external agency</div>
+      </div>
+      <div>
+        <div class="text-stat font-bold text-dark tracking-[-0.03em] leading-[1.1]">5</div>
+        <div class="text-sm text-muted mt-1.5 font-[450]">languages spoken</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN SECTION -->
+<section id="design" class="hidden py-[120px]">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <div class="max-w-[600px] mb-12">
+      <div class="text-sm font-semibold text-blue tracking-wide mb-3">Design</div>
+      <h2 class="text-section font-[680] text-dark leading-[1.12] tracking-[-0.025em] mb-3.5">Landing pages that convert, systems that scale</h2>
+      <p class="text-lg text-muted leading-relaxed">At citizenM I owned the full web presence — campaign landing pages, microsites, CRM flows, paid ads, and social. Each campaign went from a loose brief to shipped pages.</p>
+    </div>
+    <div class="feature-grid grid grid-cols-2 gap-4">
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Campaign landing pages</h3>
+          <p class="text-[15px] text-muted leading-relaxed">End-to-end design and build of conversion-focused landing pages for seasonal campaigns across a global hospitality brand.</p>
+        </div>
+        <div class="px-7 pb-7"><div class="w-full aspect-[16/10] rounded-[1.5rem] flex items-center justify-center text-[13px] text-light-muted font-medium bg-[#eef4ff]">citizenM campaign pages</div></div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Design system in Figma</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Built and maintained reusable components for web, email, and social — keeping everything consistent as the team scaled.</p>
+        </div>
+        <div class="px-7 pb-7"><div class="w-full aspect-[16/10] rounded-[1.5rem] flex items-center justify-center text-[13px] text-light-muted font-medium bg-[#edf7ed]">Figma design system</div></div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">CRM & email flows</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Designed data-informed CRM email flows and paid ad assets, iterating based on performance data and real user behaviour.</p>
+        </div>
+        <div class="px-7 pb-7"><div class="w-full aspect-[16/10] rounded-[1.5rem] flex items-center justify-center text-[13px] text-light-muted font-medium bg-[#f0eeff]">Email flow design</div></div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Brand film direction</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Directed a short brand film from concept through shoot to post-production — extending the campaign into video storytelling.</p>
+        </div>
+        <div class="px-7 pb-7"><div class="w-full aspect-[16/10] rounded-[1.5rem] flex items-center justify-center text-[13px] text-light-muted font-medium bg-[#fef5ee]">Brand film stills</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUILD SECTION -->
+<section id="build" class="hidden py-[120px] border-t border-gray-200">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <div class="max-w-[600px] mb-12">
+      <div class="text-sm font-semibold text-blue tracking-wide mb-3">Build</div>
+      <h2 class="text-section font-[680] text-dark leading-[1.12] tracking-[-0.025em] mb-3.5">I also code — and that changes how I design</h2>
+      <p class="text-lg text-muted leading-relaxed">I build websites in Nuxt, Tailwind, and Sanity CMS. That means I think about interaction, motion, and responsive behaviour as part of the design — not after.</p>
+    </div>
+    <div class="feature-grid grid grid-cols-2 gap-4">
+      <div class="feature-card wide bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">113 Suicide Prevention</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Designed and developed a website focused on usability, accessibility, and sensitive content hierarchy for a diverse, vulnerable audience. Full UX process from research through launch.</p>
+        </div>
+        <div class="p-7"><div class="w-full aspect-[16/10] rounded-[1.5rem] flex items-center justify-center text-[13px] text-light-muted font-medium bg-[#eef4ff]">113 website</div></div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Activant Capital</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Redesigned a complex financial services brand into a clear, conversion-oriented web presence. Design and frontend, concept to launch.</p>
+        </div>
+        <div class="px-7 pb-7"><div class="w-full aspect-[16/10] rounded-[1.5rem] flex items-center justify-center text-[13px] text-light-muted font-medium bg-[#fef5ee]">Activant website</div></div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Masterclass Festival Amsterdam</h3>
+          <p class="text-[15px] text-muted leading-relaxed">New digital identity spanning website, social templates, CRM design, and on-site festival wayfinding. Currently in development.</p>
+        </div>
+        <div class="px-7 pb-7"><div class="w-full aspect-[16/10] rounded-[1.5rem] flex items-center justify-center text-[13px] text-light-muted font-medium bg-[#f0eeff]">Masterclass identity</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="hidden py-20 border-t border-gray-200 text-center">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <blockquote class="text-quote font-medium text-dark leading-[1.45] max-w-[700px] mx-auto mb-6 tracking-[-0.01em]">"The campaigns I co-led at citizenM brought in over €20M in revenue — the brand's best result to date. That felt like a team win, not a personal one."</blockquote>
+    <cite class="not-italic text-[15px] text-muted"><strong class="text-dark font-semibold">Marco Tiberio</strong> · In-House Designer at citizenM, 2022–2025</cite>
+  </div>
+</section>
+
+<!-- LEAD -->
+<section id="lead" class="py-[120px] border-t border-gray-200">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <div class="max-w-[600px] mb-12">
+      <div class="text-sm font-semibold text-blue tracking-wide mb-3 uppercase">Collaborate</div>
+      <h2 class="text-section font-[680] text-dark leading-[1.12] tracking-[-0.025em] mb-3.5">I work well with people — and I work well alone</h2>
+      <p class="text-lg text-muted leading-relaxed">Used to async, remote-first environments. Comfortable making decisions when something needs to move, and slowing down when the team needs to be included.</p>
+    </div>
+    <div class="feature-grid grid grid-cols-2 gap-4">
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Cross-functional collaboration</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Worked daily with marketing, product, and content teams. Built the design system so others could work with consistent components without me being a bottleneck.</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">In-house content team</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Built and led a photo/video content team that replaced an external agency — saving €50K+ annually while raising quality and speed.</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Generative AI workflows</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Use AI daily to speed up ideation and production. But the best ideas still come from people talking to each other.</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Async & written communication</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Years of remote-first work. Clear documentation, well-structured Figma files, and knowing when a Loom is better than a meeting.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="py-[120px] border-t border-gray-200">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <div class="max-w-[600px] mb-12">
+      <div class="text-sm font-semibold text-blue tracking-wide mb-3">Tools</div>
+      <h2 class="text-section font-[680] text-dark leading-[1.12] tracking-[-0.025em] uppercase">The stack</h2>
+    </div>
+    <div class="feature-grid grid grid-cols-2 gap-4">
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Design</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Figma · Adobe Creative Suite · After Effects · Premiere Pro · Lightroom</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Frontend</h3>
+          <p class="text-[15px] text-muted leading-relaxed">HTML · CSS · JavaScript · Vue.js / Nuxt · Tailwind CSS · Sanity CMS · Webflow · Framer</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Process</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Data-informed iteration · Component-driven design · CMS architecture · Generative AI workflows</p>
+        </div>
+      </div>
+      <div class="bg-white rounded-[1.5rem] overflow-hidden border border-gray-200">
+        <div class="pt-7 px-7 pb-5">
+          <h3 class="text-[17px] font-semibold text-dark mb-1.5">Languages</h3>
+          <p class="text-[15px] text-muted leading-relaxed">Italian (native) · English (advanced) · French (advanced) · Spanish · Arabic</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section id="contact" class="py-[100px] text-center border-t border-gray-200">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <div class="text-sm font-semibold text-blue tracking-wide mb-4 uppercase">Get in touch</div>
+    <h2 class="text-section font-[680] text-dark leading-[1.12] tracking-[-0.025em] mb-5">Ready to raise the bar on web&nbsp;craft</h2>
+    <p class="text-lg text-muted max-w-[480px] mx-auto mb-8 leading-relaxed">Spoke sounds like the kind of team where the work matters more than the process around it. That's where I do my best.</p>
+    <div class="flex gap-3 justify-center flex-wrap">
+      <a href="mailto:tiberiomrc@gmail.com" class="inline-flex items-center gap-2 bg-blue text-white text-base font-[550] px-7 py-3.5 rounded-lg no-underline hover:bg-blue-hover transition-colors">
+        Email Marco
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="https://tiberiomar.com" target="_blank" class="inline-flex items-center gap-2 text-dark text-base font-[550] px-7 py-3.5 rounded-lg no-underline border border-gray-200 hover:bg-black/[0.03] transition-all">
+        View portfolio
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-gray-200 py-6 px-6 text-center flex flex-row justify-between items-center">
+  <div class="flex gap-6 justify-center items-center flex-wrap">
+    <a href="mailto:tiberiomrc@gmail.com" class="text-sm text-black no-underline font-medium hover:text-dark transition-colors">tiberiomrc@gmail.com</a>
+    <a href="https://tiberiomar.com" target="_blank" class="text-sm text-black no-underline font-medium hover:text-dark transition-colors">tiberiomar.com</a>
+    <a href="https://linkedin.com/in/marcotiberio" target="_blank" class="text-sm text-black no-underline font-medium hover:text-dark transition-colors">LinkedIn</a>
+    <a href="tel:+31629327875" class="text-sm text-black no-underline font-medium hover:text-dark transition-colors">+31 6 29 32 78 75</a>
+  </div>
+  <p class="text-[13px] text-muted flex items-center">Marco Tiberio · Amsterdam, NL · Application for Staff Designer, Marketing Design at Spoke</p>
+</footer>
+
+<script>
+  (function() {
+    const leftLabels = document.querySelectorAll('#diamond-labels-left .diamond-label');
+    const rightLabels = document.querySelectorAll('#diamond-labels-right .diamond-label');
+    const layers = document.querySelectorAll('#diamond-stack .diamond-layer');
+    let activeIndex = 0;
+
+    function activate(index) {
+      activeIndex = index;
+      layers.forEach(l => l.classList.remove('active'));
+      leftLabels.forEach(l => l.classList.remove('active'));
+      rightLabels.forEach(l => l.classList.remove('active'));
+      layers[index].classList.add('active');
+      leftLabels[index].classList.add('active');
+      rightLabels[index].classList.add('active');
+    }
+
+    leftLabels.forEach(label => {
+      label.addEventListener('click', () => activate(parseInt(label.dataset.index)));
+      label.addEventListener('mouseenter', () => {
+        const i = parseInt(label.dataset.index);
+        rightLabels.forEach(l => l.classList.remove('active'));
+        layers.forEach(l => l.classList.remove('active'));
+        rightLabels[i].classList.add('active');
+        layers[i].classList.add('active');
+      });
+      label.addEventListener('mouseleave', () => {
+        rightLabels.forEach(l => l.classList.remove('active'));
+        layers.forEach(l => l.classList.remove('active'));
+        rightLabels[activeIndex].classList.add('active');
+        layers[activeIndex].classList.add('active');
+      });
+    });
+  })();
+</script>
+</body>
+</html>
